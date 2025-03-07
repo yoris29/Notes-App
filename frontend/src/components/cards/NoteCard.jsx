@@ -22,8 +22,10 @@ export const NoteCard = ({
       </div>
       <div className="w-16">
         <Pin
-          onPin={onPin}
-          className="absolute top-4 right-5 hover:text-blue-700 transition-[0.3s] cursor-pointer"
+          onClick={onPin}
+          className={`${
+            isPinned ? "text-blue-700" : ""
+          } absolute top-4 right-5 hover:text-blue-700 transition-[0.3s] cursor-pointer`}
         />
         <div className="flex justify-between">
           <Pencil
@@ -42,7 +44,7 @@ export const NoteCard = ({
   );
 };
 
-NoteCard.PropTypes = {
+NoteCard.propTypes = {
   title: PropTypes.string,
   date: PropTypes.string,
   description: PropTypes.string,
