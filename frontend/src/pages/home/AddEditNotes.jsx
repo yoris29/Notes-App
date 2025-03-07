@@ -1,8 +1,12 @@
+import { useState } from "react";
+import { TagInput } from "../../components/input/TagInput";
+
 export const AddEditNotes = () => {
+  const [tags, setTags] = useState([]);
   return (
-    <div>
+    <div className="">
       <div className="flex flex-col gap-2">
-        <label>Title:</label>
+        <label>TITLE</label>
         <input
           className="text-2xl text-slate-950 outline-none"
           placeholder="title..."
@@ -10,7 +14,7 @@ export const AddEditNotes = () => {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label className="">Description:</label>
+        <label className="">DESCRIPTION</label>
         <textarea
           className="text-md text-slate-950 bg-slate-50 p-2 rounded-md outline-none"
           placeholder="description..."
@@ -18,6 +22,18 @@ export const AddEditNotes = () => {
           rows={10}
         />
       </div>
+      <div>
+        <label>TAGS</label>
+        <TagInput tags={tags} setTags={setTags} />
+      </div>
+      <button
+        onClick={() => {}}
+        className="mt-5 p-3 w-full bg-blue-500 text-white rounded-lg "
+      >
+        ADD
+      </button>{" "}
     </div>
   );
 };
+
+export default AddEditNotes;
