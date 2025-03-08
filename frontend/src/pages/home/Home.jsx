@@ -9,7 +9,11 @@ import AddEditNotes from "./AddEditNotes";
 export const Home = () => {
   // TODO: new note button, map through notes using notes state
 
-  const [openModal, setOpenModal] = useState();
+  const [openModal, setOpenModal] = useState({
+    isShown: false,
+    type: "add",
+    data: null,
+  });
   const [isPinned, setIsPinned] = useState(false);
 
   const onPin = () => {
@@ -32,22 +36,30 @@ export const Home = () => {
         />
       </div>
       <button
-        onClick={() => setOpenModal(true)}
+        onClick={() => setOpenModal({ isShown: true, type: "add", data: null })}
         className="absolute bottom-8 right-8 w-16 h-16 rounded-2xl bg-sky-600 hover:bg-sky-800 transition-[.3s] cursor-pointer text-white flex justify-center items-center"
       >
         <Plus size={"38px"} strokeWidth={"1.5px"} />
       </button>
 
       <Modal
-        isOpen={openModal}
-        onRequestClose={() => setOpenModal(false)}
+        isOpen={openModal.isShown}
+        onRequestClose={() =>
+          setOpenModal({ isShown: false, type: "add", data: null })
+        }
         style={{
           overlay: { backgroundColor: "rgba(0,0,0,0.4)" },
         }}
         contentLabel="Example Modal"
         className="w-256 mx-auto mt-18 bg-white p-6 rounded-md"
       >
-        <AddEditNotes />
+        <AddEditNotes
+          type={openModal.type}
+          noteData={openModal.data}
+          closeModal={() =>
+            setOpenModal({ isShown: false, type: "add", data: null })
+          }
+        />
       </Modal>
     </div>
   );
