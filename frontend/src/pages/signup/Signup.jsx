@@ -39,7 +39,7 @@ export const Signup = () => {
         onSubmit={handleSignup}
         className="h-[90%] flex flex-col justify-around"
       >
-        <h1 className="w-18 ml-4 mx-auto text-2xl">Login</h1>
+        <h1 className="w-18 ml-4 mx-auto text-2xl">Signup</h1>
         <div>
           <input
             type="text"
