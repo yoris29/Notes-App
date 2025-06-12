@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const jwt = require("jsonwebtoken");
 
 const auth = (req, res, next) => {
@@ -8,13 +10,13 @@ const auth = (req, res, next) => {
     return res.sendStatus(401);
   }
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
       return res.sendStatus(401);
-      req.user = user;
-      next();
     }
+    req.user = user;
+    next();
   });
 };
 
-module.exports = { auth };
+module.exports = auth;
