@@ -2,10 +2,8 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const Note = require("../models/note.model");
-const hello = (req, res) => {
-  res.json({ data: "Hello" });
-};
 
+// Create an acount
 const createAccount = async (req, res) => {
   const { fullName, email, password } = req.body;
 
@@ -39,6 +37,7 @@ const createAccount = async (req, res) => {
   });
 };
 
+// Login and generate jwt for a specific user
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -69,6 +68,20 @@ const login = async (req, res) => {
   }
 };
 
+// Get a specific user
+const getUser = async (req, res) => {
+  const user = req.user;
+
+  const isUser = await User.findOne({ _id: user._id });
+
+  if (!isUser) {
+    return res.status(401).json({ err: true, msg: "User not found" });
+  }
+
+  return res.status(200).json({ err: false, user: isUser });
+};
+
+// Create a new note
 const createNote = async (req, res) => {
   const { title, content, tags } = req.body;
 
@@ -93,9 +106,11 @@ const createNote = async (req, res) => {
   }
 };
 
+// Edit a specific note of a specific user
 const editNote = async (req, res) => {
   const { noteId } = req.params;
   const { title, content, tags, isPinned } = req.body;
+  const user = req.user;
 
   if ((!title, !content, !tags)) {
     return res.status(400).json({ error: true, msg: "No changes provided" });
@@ -103,7 +118,7 @@ const editNote = async (req, res) => {
 
   try {
     const note = await Note.findOneAndUpdate(
-      { _id: noteId, userId: req.user._id }, // Filter document
+      { _id: noteId, userId: user._id }, // Filter document
       { title, content, tags, isPinned }, // Updated values
       { new: true, runValidators: true, overwrite: true } // Options
     );
@@ -112,13 +127,16 @@ const editNote = async (req, res) => {
       return res.status(404).json({ error: true, msg: "Note not found" });
     }
 
-    return res.json({ err: false, msg: "Note updated successfully", note });
+    return res
+      .status(200)
+      .json({ err: false, msg: "Note updated successfully", note });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: true, msg: "Internal server error" });
   }
 };
 
+// Fetch all the notes of a certain user
 const getNotes = async (req, res) => {
   const user = req.user;
 
@@ -136,11 +154,63 @@ const getNotes = async (req, res) => {
   }
 };
 
+// Delete a specific noteId from a specific userId
+const deleteNote = async (req, res) => {
+  const { noteId } = req.params;
+  const user = req.user;
+
+  try {
+    const note = await Note.findOneAndDelete({ userId: user._id, _id: noteId });
+
+    if (!note) {
+      return res
+        .status(404)
+        .json({ err: true, msg: "Couldn't find the note you're looking for" });
+    }
+    return res
+      .status(200)
+      .json({ err: false, msg: "Note deleted successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ err: true, msg: "Internal server error" });
+  }
+};
+
+// Update isPinned
+const updatePinned = async (req, res) => {
+  const { noteId } = req.params;
+  const { isPinned } = req.body;
+  const user = req.user;
+
+  try {
+    const note = await Note.findOneAndUpdate(
+      { _id: noteId, userId: req.user._id }, // Filter document
+      { isPinned }, // Updated values
+      { new: true, runValidators: true, overwrite: true } // Options
+    );
+
+    if (!note) {
+      return res.status(404).json({ error: true, msg: "Note not found" });
+    }
+
+    return res.status(200).json({
+      err: false,
+      msg: "isPinned value updated successfully",
+      isPinned,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: true, msg: "Internal server error" });
+  }
+};
+
 module.exports = {
-  hello,
+  getUser,
   createAccount,
   login,
   createNote,
   editNote,
   getNotes,
+  deleteNote,
+  updatePinned,
 };
