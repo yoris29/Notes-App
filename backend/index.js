@@ -10,7 +10,7 @@ require("dotenv").config();
 // Middlewares
 app.use(express.json());
 app.use(cors());
-app.use("/api/v1/tasks", tasks);
+app.use("/api/v1", tasks);
 
 const port = process.env.PORT;
 const start = async () => {

@@ -14,11 +14,11 @@ const {
 
 router.route("/login").post(login);
 router.route("/createAccount").post(createAccount);
-router.post("/addNote", auth, createNote);
-router.patch("/edit-note/:noteId", auth, editNote);
-router.get("/all-notes", auth, getNotes);
-router.delete("/delete-note/:noteId", auth, deleteNote);
-router.patch("/update-note-pinned/:noteId", auth, updatePinned);
-router.get("/get-user", auth, getUser);
+router.post("/tasks/addNote", auth, createNote);
+router.patch("/tasks/edit-note/:noteId", auth, editNote);
+router.get("/tasks/all-notes", auth, getNotes);
+router.delete("/tasks/delete-note/:noteId", auth, deleteNote);
+router.patch("/tasks/update-note-pinned/:noteId", auth, updatePinned);
+router.get("/tasks/get-user", auth, getUser);
 
 module.exports = router;
