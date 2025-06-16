@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NoteCard } from "../../components/cards/NoteCard";
 import { Navbar } from "../../components/navbar/Navbar";
-import PropTypes from "prop-types";
 import { Plus } from "lucide-react";
 import Modal from "react-modal";
 import AddEditNotes from "./AddEditNotes";
+import { useNavigate } from "react-router-dom";
+import { axiosInstance } from "../../utils/axiosInstance";
 
 export const Home = () => {
   // TODO: new note button, map through notes using notes state
@@ -14,15 +15,38 @@ export const Home = () => {
     type: "add",
     data: null,
   });
+  const [userInfo, setUserInfo] = useState();
+  const navigate = useNavigate();
   const [isPinned, setIsPinned] = useState(false);
 
   const onPin = () => {
     isPinned ? setIsPinned(false) : setIsPinned(true);
   };
 
+  const getUserInfo = async () => {
+    try {
+      const res = await axiosInstance.get("/tasks/get-user");
+
+      if (res.data && res.data.user) {
+        setUserInfo(res.data.user);
+      }
+    } catch (err) {
+      if (err.response.status === 401) {
+        localStorage.clear();
+        console.log(err);
+        navigate("/login");
+      }
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+    return () => {};
+  }, []);
+
   return (
     <div>
-      <Navbar />
+      <Navbar userInfo={userInfo} />
       <div className="grid grid-cols-3 gap-1 w-full">
         <NoteCard
           title="New note"
@@ -63,17 +87,6 @@ export const Home = () => {
       </Modal>
     </div>
   );
-};
-
-NoteCard.PropTypes = {
-  title: PropTypes.string,
-  date: PropTypes.string,
-  description: PropTypes.string,
-  tags: PropTypes.string,
-  isPinned: PropTypes.bool,
-  onEdit: PropTypes.func,
-  onDelete: PropTypes.func,
-  onPin: PropTypes.func,
 };
 
 export default Home;
