@@ -12,7 +12,9 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("token");
-    accessToken ? (config.headers.Authorization = `Bearer ${accessToken}`) : "";
+    accessToken
+      ? (config.headers.Authorization = `Bearer ${accessToken}`)
+      : console.log("No access token");
     return config;
   },
   (err) => {

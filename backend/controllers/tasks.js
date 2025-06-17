@@ -25,9 +25,13 @@ const createAccount = async (req, res) => {
   const user = new User({ fullName, email, password });
   await user.save();
 
-  const token = jwt.sign({ fullName }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
-  });
+  const token = jwt.sign(
+    { _id: user._id, email: user.email },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "30d",
+    }
+  );
 
   return res.json({
     error: false,

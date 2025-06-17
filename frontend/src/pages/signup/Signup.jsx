@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PasswordInput } from "../../components/input/PasswordInput";
 import { helper } from "../../utils/helper";
+import { axiosInstance } from "../../utils/axiosInstance";
 
 export const Signup = () => {
   const [name, setName] = useState("");
@@ -11,7 +12,9 @@ export const Signup = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const handleSignup = (e) => {
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     {
@@ -31,6 +34,28 @@ export const Signup = () => {
     }
 
     // TODO: signup API call
+    try {
+      const res = await axiosInstance.post("/createAccount", {
+        fullName: name,
+        email,
+        password,
+      });
+      if (res.data && res.data.error) {
+        setPasswordError(res.data.msg);
+        return;
+      }
+      if (res.data && res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.getItem("token") ? navigate("/") : "";
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response && err.response.data && err.response.data.msg) {
+        setPasswordError(err.response.data.msg);
+      } else {
+        setPasswordError("Unexpected error happened");
+      }
+    }
   };
 
   return (

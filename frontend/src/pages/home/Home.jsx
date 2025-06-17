@@ -26,7 +26,6 @@ export const Home = () => {
   const getUserInfo = async () => {
     try {
       const res = await axiosInstance.get("/tasks/get-user");
-
       if (res.data && res.data.user) {
         setUserInfo(res.data.user);
       }

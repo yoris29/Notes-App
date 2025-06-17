@@ -31,8 +31,6 @@ export const Login = () => {
         email,
         password,
       });
-      console.log("req sent");
-      console.log(res.data);
 
       if (res.data && res.data.token) {
         localStorage.setItem("token", res.data.token);
