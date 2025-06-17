@@ -18,6 +18,7 @@ export const Home = () => {
   const [userInfo, setUserInfo] = useState();
   const navigate = useNavigate();
   const [isPinned, setIsPinned] = useState(false);
+  const [allNotes, setAllNotes] = useState([]);
 
   const onPin = () => {
     isPinned ? setIsPinned(false) : setIsPinned(true);
@@ -38,25 +39,45 @@ export const Home = () => {
     }
   };
 
+  // Get all the current user's notes
+  const getAllNotes = async () => {
+    try {
+      const res = await axiosInstance.get("/tasks/all-notes");
+      // Current user has notes
+      if (res.data && !res.data.err && res.data.notes) {
+        setAllNotes(res.data.notes);
+        console.log("Notes set in allNotes state, even if there are none");
+      }
+    } catch (err) {
+      console.log("Unexpected error occurred", err);
+    }
+  };
+
   useEffect(() => {
     getUserInfo();
+    getAllNotes();
     return () => {};
   }, []);
 
   return (
-    <div>
+    <>
       <Navbar userInfo={userInfo} />
-      <div className="grid grid-cols-3 gap-1 w-full">
-        <NoteCard
-          title="New note"
-          date="14-14-2024"
-          description="This note's description"
-          tags="#Work #Meeting"
-          isPinned={isPinned}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          onPin={onPin}
-        />
+      <div className="container mx-auto">
+        <div className="grid grid-cols-3 gap-1 w-full">
+          {allNotes.map((note, index) => (
+            <NoteCard
+              key={note._id}
+              title={note.title}
+              date={note.createdOn}
+              description={note.content}
+              tags={note.tags}
+              isPinned={note.isPinned}
+              onEdit={() => {}}
+              onDelete={() => {}}
+              onPin={onPin}
+            />
+          ))}
+        </div>
       </div>
       <button
         onClick={() => setOpenModal({ isShown: true, type: "add", data: null })}
@@ -84,7 +105,7 @@ export const Home = () => {
           }
         />
       </Modal>
-    </div>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import { Pin, Pencil, Trash } from "lucide-react";
-import PropTypes from "prop-types";
+import moment from "moment";
 
 export const NoteCard = ({
   title,
@@ -16,9 +16,11 @@ export const NoteCard = ({
     <div className="flex justify-between border border-gray-400 shadow-md pl-2 ml-16 mt-16 w-80 h-48 relative bg-gray-300 rounded-md">
       <div className="flex flex-col justify-around w-64">
         <h2 className="text-2xl font-bold mt-1">{title}</h2>
-        <p className="mb-4">{date}</p>
+        <p className="mb-4">{moment(date).format("Do MMM YYYY")}</p>
         <p className="mb-4 text-sm">{description}</p>
-        <h3 className="text-blue-600 cursor-pointer">{tags}</h3>
+        <h3 className="text-blue-600 cursor-pointer">
+          {tags.map((tag) => `#${tag} `)}
+        </h3>
       </div>
       <div className="w-16">
         <Pin
@@ -42,15 +44,4 @@ export const NoteCard = ({
       </div>
     </div>
   );
-};
-
-NoteCard.propTypes = {
-  title: PropTypes.string,
-  date: PropTypes.string,
-  description: PropTypes.string,
-  tags: PropTypes.string,
-  isPinned: PropTypes.bool,
-  onEdit: PropTypes.func,
-  onDelete: PropTypes.func,
-  onPin: PropTypes.func,
 };
