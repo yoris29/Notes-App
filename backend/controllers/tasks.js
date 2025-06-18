@@ -103,7 +103,7 @@ const createNote = async (req, res) => {
       tags: tags || [],
       userId: req.user._id,
     });
-    return res.json({ error: false, msg: "Note added successfuly" });
+    return res.json({ error: false, msg: "Note added successfuly", note });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: true, msg: "Internal Server Error" });
