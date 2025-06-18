@@ -103,6 +103,7 @@ export const Home = () => {
           closeModal={() =>
             setOpenModal({ isShown: false, type: "add", data: null })
           }
+          getAllNotes={getAllNotes}
         />
       </Modal>
     </>

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { TagInput } from "../../components/input/TagInput";
 import { X } from "lucide-react";
-import PropTypes from "prop-types";
+import { axiosInstance } from "../../utils/axiosInstance";
 
-export const AddEditNotes = ({ noteData, type, closeModal }) => {
+export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
@@ -24,9 +24,29 @@ export const AddEditNotes = ({ noteData, type, closeModal }) => {
     type === "add" ? addNote() : "";
   };
 
+  // edit note
   const editNote = async () => {};
 
-  const addNote = async () => {};
+  // add note
+  const addNote = async () => {
+    try {
+      const res = await axiosInstance.post("/tasks/addNote", {
+        title,
+        content: description,
+        tags,
+      });
+
+      if (res.data && res.data.note) {
+        getAllNotes();
+        closeModal();
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response.data && err.response.data.error) {
+        setError(err.response.data.msg);
+      }
+    }
+  };
 
   return (
     <div className="">
@@ -71,12 +91,6 @@ export const AddEditNotes = ({ noteData, type, closeModal }) => {
       </button>{" "}
     </div>
   );
-};
-
-AddEditNotes.propTypes = {
-  noteData: PropTypes.object,
-  type: PropTypes.string,
-  closeModal: PropTypes.func,
 };
 
 export default AddEditNotes;
