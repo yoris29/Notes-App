@@ -24,6 +24,14 @@ export const Home = () => {
     isPinned ? setIsPinned(false) : setIsPinned(true);
   };
 
+  const handleEdit = (noteDetails) => {
+    setOpenModal({
+      isShown: true,
+      data: noteDetails,
+      type: "edit",
+    });
+  };
+
   const getUserInfo = async () => {
     try {
       const res = await axiosInstance.get("/tasks/get-user");
@@ -72,7 +80,7 @@ export const Home = () => {
               description={note.content}
               tags={note.tags}
               isPinned={note.isPinned}
-              onEdit={() => {}}
+              onEdit={() => handleEdit(note)}
               onDelete={() => {}}
               onPin={onPin}
             />

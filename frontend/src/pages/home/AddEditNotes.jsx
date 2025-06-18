@@ -4,9 +4,9 @@ import { X } from "lucide-react";
 import { axiosInstance } from "../../utils/axiosInstance";
 
 export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState([]);
+  const [title, setTitle] = useState(noteData?.title || "");
+  const [description, setDescription] = useState(noteData?.content || "");
+  const [tags, setTags] = useState(noteData?.tags || []);
   const [error, setError] = useState(null);
 
   const handleAddNote = () => {
@@ -25,7 +25,26 @@ export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
   };
 
   // edit note
-  const editNote = async () => {};
+  const editNote = async () => {
+    const noteId = noteData._id;
+    try {
+      const res = await axiosInstance.patch(`/tasks/edit-note/${noteId}`, {
+        title,
+        content: description,
+        tags,
+      });
+
+      if (res.data && res.data.note) {
+        getAllNotes();
+        closeModal();
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response.data && err.response.data.error) {
+        setError(err.response.data.msg);
+      }
+    }
+  };
 
   // add note
   const addNote = async () => {
@@ -66,6 +85,7 @@ export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
           placeholder="title..."
           type="text"
           onChange={(e) => setTitle(e.target.value)}
+          value={title}
         />
       </div>
       <div className="flex flex-col gap-2">
@@ -76,6 +96,7 @@ export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
           type="text"
           rows={10}
           onChange={(e) => setDescription(e.target.value)}
+          value={description}
         />
       </div>
       <div>
@@ -87,7 +108,7 @@ export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
         onClick={handleAddNote}
         className="mt-5 p-3 w-full bg-blue-500 text-white rounded-lg cursor-pointer"
       >
-        ADD
+        {type === "add" ? "ADD" : "EDIT"}
       </button>{" "}
     </div>
   );
