@@ -9,6 +9,7 @@ import { axiosInstance } from "../../utils/axiosInstance";
 import { EmptyCard } from "../../components/cards/EmptyCard.jsx";
 import { Toast } from "../../components/toast/Toast.jsx";
 import addNotesImg from "../../../public/images/add-notes.png";
+import noDataImg from "../../../public/images/no-data.png";
 
 export const Home = () => {
   // TODO: new note button, map through notes using notes state
@@ -154,7 +155,14 @@ export const Home = () => {
               />
             ))
           ) : (
-            <EmptyCard imgSrc={addNotesImg} message="Start by adding a note!" />
+            <EmptyCard
+              imgSrc={isSearch ? noDataImg : addNotesImg}
+              message={
+                isSearch
+                  ? "No notes matching your current query"
+                  : "Start by adding a note!"
+              }
+            />
           )}
         </div>
       </div>
