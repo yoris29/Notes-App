@@ -208,6 +208,36 @@ const updatePinned = async (req, res) => {
   }
 };
 
+const searchNotes = async (req, res) => {
+  const user = req.user;
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ err: true, msg: "Search query is required" });
+  }
+
+  try {
+    const matchingNotes = await Note.find({
+      userId: user._id,
+      $or: [
+        { title: { $regex: new RegExp(query, "i") } },
+        { content: { $regex: new RegExp(query, "i") } },
+      ],
+    });
+
+    return res
+      .status(200)
+      .json({
+        err: false,
+        msg: "Notes matching the search query",
+        matchingNotes,
+      });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ err: true, msg: "Internal server error" });
+  }
+};
+
 module.exports = {
   getUser,
   createAccount,
@@ -217,4 +247,5 @@ module.exports = {
   getNotes,
   deleteNote,
   updatePinned,
+  searchNotes,
 };

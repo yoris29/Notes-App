@@ -10,6 +10,7 @@ const {
   getNotes,
   deleteNote,
   updatePinned,
+  searchNotes,
 } = require("../controllers/tasks");
 
 router.route("/login").post(login);
@@ -20,5 +21,6 @@ router.get("/tasks/all-notes", auth, getNotes);
 router.delete("/tasks/delete-note/:noteId", auth, deleteNote);
 router.patch("/tasks/update-note-pinned/:noteId", auth, updatePinned);
 router.get("/tasks/get-user", auth, getUser);
+router.get("/tasks/search-notes", auth, searchNotes);
 
 module.exports = router;
