@@ -1,11 +1,18 @@
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 
-export const SearchBar = () => {
+export const SearchBar = ({ onSearchNote, handleSearchClear }) => {
   const [searchValue, setSearchValue] = useState("");
 
   const handleSearch = () => {
-    // TODO: api call to get notes
+    if (searchValue) {
+      onSearchNote(searchValue);
+    }
+  };
+
+  const onClearSearch = () => {
+    setSearchValue("");
+    handleSearchClear();
   };
 
   return (
@@ -19,7 +26,7 @@ export const SearchBar = () => {
       />
       {searchValue ? (
         <X
-          onClick={() => setSearchValue("")}
+          onClick={onClearSearch}
           className="absolute right-10 cursor-pointer text-gray-800"
         />
       ) : (

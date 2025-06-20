@@ -13,15 +13,16 @@ import addNotesImg from "../../../public/images/add-notes.png";
 export const Home = () => {
   // TODO: new note button, map through notes using notes state
 
+  const [userInfo, setUserInfo] = useState();
+  const navigate = useNavigate();
+  const [isPinned, setIsPinned] = useState(false);
+  const [allNotes, setAllNotes] = useState([]);
+  const [isSearch, setIsSearch] = useState(false);
   const [openModal, setOpenModal] = useState({
     isShown: false,
     type: "add",
     data: null,
   });
-  const [userInfo, setUserInfo] = useState();
-  const navigate = useNavigate();
-  const [isPinned, setIsPinned] = useState(false);
-  const [allNotes, setAllNotes] = useState([]);
   const [showToast, setShowToast] = useState({
     isShown: false,
     message: "",
@@ -100,6 +101,29 @@ export const Home = () => {
     }
   };
 
+  const onSearchNote = async (query) => {
+    try {
+      const res = await axiosInstance.get(`/tasks/search-notes`, {
+        params: { query },
+      });
+
+      if (res.data && !res.data.err) {
+        setIsSearch(true);
+        setAllNotes(res.data.matchingNotes);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response.data && err.response.data.err) {
+        console.log("Unexpected error occurred", err);
+      }
+    }
+  };
+
+  const handleSearchClear = () => {
+    setIsSearch(false);
+    getAllNotes();
+  };
+
   useEffect(() => {
     getUserInfo();
     getAllNotes();
@@ -108,7 +132,11 @@ export const Home = () => {
 
   return (
     <>
-      <Navbar userInfo={userInfo} />
+      <Navbar
+        userInfo={userInfo}
+        onSearchNote={onSearchNote}
+        handleSearchClear={handleSearchClear}
+      />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-1 w-full">
           {allNotes.length > 0 ? (
