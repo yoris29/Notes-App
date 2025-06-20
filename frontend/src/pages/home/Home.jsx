@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import AddEditNotes from "./AddEditNotes";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../utils/axiosInstance";
+import { Toast } from "../../components/toast/Toast.jsx";
 
 export const Home = () => {
   // TODO: new note button, map through notes using notes state
@@ -19,9 +20,29 @@ export const Home = () => {
   const navigate = useNavigate();
   const [isPinned, setIsPinned] = useState(false);
   const [allNotes, setAllNotes] = useState([]);
+  const [showToast, setShowToast] = useState({
+    isShown: false,
+    message: "",
+    type: "add",
+  });
 
   const onPin = () => {
     isPinned ? setIsPinned(false) : setIsPinned(true);
+  };
+
+  const handleCloseToast = (message) => {
+    setShowToast({
+      isShown: false,
+      message,
+    });
+  };
+
+  const showToastMessage = (type, message) => {
+    setShowToast({
+      isShown: true,
+      message,
+      type,
+    });
   };
 
   const handleEdit = (noteDetails) => {
@@ -112,8 +133,15 @@ export const Home = () => {
             setOpenModal({ isShown: false, type: "add", data: null })
           }
           getAllNotes={getAllNotes}
+          showToastMessage={showToastMessage}
         />
       </Modal>
+      <Toast
+        isShown={showToast.isShown}
+        message={showToast.message}
+        type={showToast.type}
+        onClose={handleCloseToast}
+      />
     </>
   );
 };

@@ -3,7 +3,13 @@ import { TagInput } from "../../components/input/TagInput";
 import { X } from "lucide-react";
 import { axiosInstance } from "../../utils/axiosInstance";
 
-export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
+export const AddEditNotes = ({
+  noteData,
+  type,
+  closeModal,
+  getAllNotes,
+  showToastMessage,
+}) => {
   const [title, setTitle] = useState(noteData?.title || "");
   const [description, setDescription] = useState(noteData?.content || "");
   const [tags, setTags] = useState(noteData?.tags || []);
@@ -37,6 +43,7 @@ export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
       if (res.data && res.data.note) {
         getAllNotes();
         closeModal();
+        showToastMessage("edit", "Note edited successfully!");
       }
     } catch (err) {
       console.log(err);
@@ -58,6 +65,7 @@ export const AddEditNotes = ({ noteData, type, closeModal, getAllNotes }) => {
       if (res.data && res.data.note) {
         getAllNotes();
         closeModal();
+        showToastMessage("add", "Note added successfully!");
       }
     } catch (err) {
       console.log(err);
