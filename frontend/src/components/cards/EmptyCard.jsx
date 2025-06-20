@@ -1,5 +1,3 @@
-import React from "react";
-
 export const EmptyCard = ({ imgSrc, message }) => {
   return (
     <div className="flex flex-col items-center justify-center absolute right-140 top-20 mt-20 mx-auto">
