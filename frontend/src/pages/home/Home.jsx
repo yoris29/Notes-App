@@ -6,7 +6,9 @@ import Modal from "react-modal";
 import AddEditNotes from "./AddEditNotes";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../utils/axiosInstance";
+import { EmptyCard } from "../../components/cards/EmptyCard.jsx";
 import { Toast } from "../../components/toast/Toast.jsx";
+import addNotesImg from "../../../public/images/add-notes.png";
 
 export const Home = () => {
   // TODO: new note button, map through notes using notes state
@@ -109,19 +111,23 @@ export const Home = () => {
       <Navbar userInfo={userInfo} />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-1 w-full">
-          {allNotes.map((note, index) => (
-            <NoteCard
-              key={note._id}
-              title={note.title}
-              date={note.createdOn}
-              description={note.content}
-              tags={note.tags}
-              isPinned={note.isPinned}
-              onEdit={() => handleEdit(note)}
-              onDelete={() => deleteNote(note)}
-              onPin={onPin}
-            />
-          ))}
+          {allNotes.length > 0 ? (
+            allNotes.map((note, index) => (
+              <NoteCard
+                key={note._id}
+                title={note.title}
+                date={note.createdOn}
+                description={note.content}
+                tags={note.tags}
+                isPinned={note.isPinned}
+                onEdit={() => handleEdit(note)}
+                onDelete={() => deleteNote(note)}
+                onPin={onPin}
+              />
+            ))
+          ) : (
+            <EmptyCard imgSrc={addNotesImg} message="Start by adding a note!" />
+          )}
         </div>
       </div>
       <button
