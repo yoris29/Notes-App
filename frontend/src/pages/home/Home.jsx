@@ -30,10 +30,6 @@ export const Home = () => {
     type: "add",
   });
 
-  const onPin = () => {
-    isPinned ? setIsPinned(false) : setIsPinned(true);
-  };
-
   const handleCloseToast = (message) => {
     setShowToast({
       isShown: false,
@@ -125,6 +121,28 @@ export const Home = () => {
     getAllNotes();
   };
 
+  const updateIsPinned = async (note) => {
+    const noteId = note._id;
+    try {
+      const res = await axiosInstance.patch(
+        `/tasks/update-note-pinned/${noteId}`,
+        {
+          isPinned: !note.isPinned,
+        }
+      );
+
+      if (res.data && !res.data.err) {
+        getAllNotes();
+        setIsPinned(!note.isPinned);
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response.data && err.response.data.err) {
+        console.log(err);
+      }
+    }
+  };
+
   useEffect(() => {
     getUserInfo();
     getAllNotes();
@@ -141,19 +159,21 @@ export const Home = () => {
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-1 w-full">
           {allNotes.length > 0 ? (
-            allNotes.map((note, index) => (
-              <NoteCard
-                key={note._id}
-                title={note.title}
-                date={note.createdOn}
-                description={note.content}
-                tags={note.tags}
-                isPinned={note.isPinned}
-                onEdit={() => handleEdit(note)}
-                onDelete={() => deleteNote(note)}
-                onPin={onPin}
-              />
-            ))
+            allNotes
+              .sort((a, b) => b.isPinned - a.isPinned)
+              .map((note, index) => (
+                <NoteCard
+                  key={note._id}
+                  title={note.title}
+                  date={note.createdOn}
+                  description={note.content}
+                  tags={note.tags}
+                  isPinned={note.isPinned}
+                  onEdit={() => handleEdit(note)}
+                  onDelete={() => deleteNote(note)}
+                  onPin={() => updateIsPinned(note)}
+                />
+              ))
           ) : (
             <EmptyCard
               imgSrc={isSearch ? noDataImg : addNotesImg}
